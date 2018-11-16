@@ -5,25 +5,34 @@ body {
 	font-family: Helvetica , dotum;
 }
 
-.wrap_slt{
-	float:left;
-	width:50%;
-}
-
 .wrap{
-	padding:300px 20px;
+	padding:100px 20px;
 }
 
-.custom_select_box{
+.test_wrap{
+	padding:100px 0;
+}
+
+.custom_select_wrapper{
 	position: relative;
 	width:200px;
-	&.upShow{
+
+	$height-select : 40px;
+	$radius : 5px;
+
+	&.dirUp{
 		div{
-			bottom:30px;
+			bottom:$height-select;
 			border-top: 1px solid #888;
 			border-bottom:0;
+			border-radius:$radius $radius 0 0;
 			button:last-child{
 				border-bottom: 0;
+			}
+		}
+		&.active{
+			.btn_select_box{
+				border-radius:0 0 $radius $radius;
 			}
 		}
 	}
@@ -31,10 +40,12 @@ body {
 		position: relative;
 		display: block;
 		width:100%;
-		height:30px;
+		height:$height-select;
 		padding:0 15px;
 		text-align: left;
 		border:1px solid #888;
+		border-radius:$radius;
+		background-color: #fff;
 		&:after{
 			display:block;
 			position:absolute;
@@ -58,16 +69,22 @@ body {
 		border-top: 0;
 		border-bottom: 0;
 		background-color: #eee;
+		border-radius:0 0 $radius $radius;
+		z-index: 100;
 		button{
 			display: block;
 			width:100%;
-			height:30px;
-			line-height: 30px;
+			height:$height-select;
+			line-height: $height-select;
 			padding: 0 15px;
 			border-bottom: 1px solid #888;
 			text-align: left;
-			&.select {
-				background-color:blue;
+			&:hover{
+				background-color: #888;
+				color:#fff;
+			}
+			&.active {
+				background-color:#666;
 				color:#fff;
 			}
 		}
@@ -76,10 +93,21 @@ body {
 		div{
 			display: block;
 		}
-		.btn_select_box:after{
-			-webkit-transform:rotate(-45deg);
-			transform:rotate(-45deg);
-			margin-top:-2px;
+		.btn_select_box{
+			border-radius:$radius $radius 0 0 ;
+			&:after{
+				-webkit-transform:rotate(-45deg);
+				transform:rotate(-45deg);
+				margin-top:-2px;
+			}
 		}
+	}
+}
+
+.test_wrap{
+	button{
+		display: inline-block;
+		border:1px solid #333;
+		padding:5px 10px;
 	}
 }
