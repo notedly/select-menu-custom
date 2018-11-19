@@ -91,13 +91,24 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			return optionList;
 		}
 
+		// 옵션 여기로 따로 분리할 것임
 		setStyleOption() {
 
-			console.log( 'setStyleOption in' ) ;
-			if( this._opts.scroll ) {
-				this.newBox.style.overflowY = 'scroll' ;
-				this.newBox.style.height = 150 + 'px' ;
-			}
+			console.log( 'option in' ) ;
+
+			// if( this._opts.scroll ) {
+				// console.log( this.newOptBtn[0].style.border  ) ;
+				// this.newOptBtn[0].style.border = '5px solid red' ;
+				// console.log( this.newOptBtn[0].offsetHeight ) ;
+				// console.log( this.newOptBtn[0].clientHeight ) ;
+				// this.newBox.style.overflowY = 'scroll' ;
+				// this.newBox.style.height = 150 + 'px' ;
+				// this._opts.viewNum
+			// }
+
+			// if( this._opts.scroll ) {
+			// 	console.log( 'scroll 옵션 있어' ) ;
+			// }
 
 		}
 
@@ -190,24 +201,5 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 	})() ;
 
 } ;
-
-class Test {
-	constructor( name ){
-		this.name = name;
-		console.log( this.name ) ;
-	}
-}
-
-Test.prototype = {
-	getName : function(){
-		console.log( this.name ) ;
-		return this.name ;
-	}
-}
-
-var a = new Test( 'megaton' ) ;
-a.getName() ;
-var b = new Test( 'leekeunho' ) ;
-
 
 export { Common } ;
