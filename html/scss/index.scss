@@ -9,38 +9,21 @@ body {
 	padding:100px 20px;
 }
 
-.test_wrap{
-	padding:100px 0;
-}
 
 .custom_select_wrapper{
+	$select-width : 200px;
+	$select-height : 40px;
+	$radius : 6px;
+	$border-color: #888;
+
 	position: relative;
-	width:200px;
+	width:$select-width;
 
-	$height-select : 40px;
-	$radius : 5px;
-
-	&.dirUp{
-		div{
-			bottom:$height-select;
-			border-top: 1px solid #888;
-			border-bottom:0;
-			border-radius:$radius $radius 0 0;
-			button:last-child{
-				border-bottom: 0;
-			}
-		}
-		&.active{
-			.btn_select_box{
-				border-radius:0 0 $radius $radius;
-			}
-		}
-	}
-	.btn_select_box{
+	.btn_select{
 		position: relative;
 		display: block;
 		width:100%;
-		height:$height-select;
+		height:$select-height;
 		padding:0 15px;
 		text-align: left;
 		border:1px solid #888;
@@ -61,26 +44,28 @@ body {
 			content:""
 		}
 	}
-	div{
-		display: none;
+	.bx_option{
+		visibility: hidden;
+		opacity: 0;
 		position: absolute;
 		width: 100%;
-		border: 1px solid #888;
+		border: 1px solid $border-color;
 		border-top: 0;
 		border-bottom: 0;
 		background-color: #eee;
 		border-radius:0 0 $radius $radius;
 		z-index: 100;
-		button{
+		.item{
 			display: block;
 			width:100%;
-			height:$height-select;
-			line-height: $height-select;
+			height:$select-height;
+			line-height: $select-height;
 			padding: 0 15px;
-			border-bottom: 1px solid #888;
+			border-bottom: 1px solid $border-color;
 			text-align: left;
+			cursor:pointer;
 			&:hover{
-				background-color: #888;
+				background-color: $border-color;
 				color:#fff;
 			}
 			&.active {
@@ -89,11 +74,28 @@ body {
 			}
 		}
 	}
-	&.active{
-		div{
-			display: block;
+	&.dirUp{
+		.bx_option{
+			bottom:$select-height;
+			border-top: 1px solid $border-color;
+			border-bottom:0;
+			border-radius:$radius $radius 0 0;
+			button:last-child{
+				border-bottom: 0;
+			}
 		}
-		.btn_select_box{
+		&.active{
+			.btn_select{
+				border-radius:0 0 $radius $radius;
+			}
+		}
+	}
+	&.active{
+		.bx_option{
+			visibility: visible;
+			opacity: 1;
+		}
+		.btn_select{
 			border-radius:$radius $radius 0 0 ;
 			&:after{
 				-webkit-transform:rotate(-45deg);
@@ -110,4 +112,11 @@ body {
 		border:1px solid #333;
 		padding:5px 10px;
 	}
+}
+
+.custom_select{
+	position: absolute;
+	left:-9999em;
+	visibility: hidden;
+	opacity: 0;
 }

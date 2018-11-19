@@ -5,8 +5,19 @@ import { Common } from './ui/common' ;
 window.addEventListener('load', function(){
 
 	let customSelect01 = Common.SelectMenuCustomModule(
-		document.querySelector('.select01 select') , { dir : 'down' } ) ;
+		document.querySelector('.select01 select') ,
+		// document.querySelectorAll('select') ,
+		{
+			dir : 'down' ,
+			scroll : true ,
+			viewNum : 4 ,
+		}
+	) ;
+
 	let customSelect02 = Common.SelectMenuCustomModule( document.querySelectorAll('.select02 select'), { dir : 'up' } ) ;
+
+
+
 
 	document.querySelector('.btn_set_select').addEventListener('click', () => {
 		customSelect01.selectIdx = 0 ;

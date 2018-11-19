@@ -1,5 +1,9 @@
 const Common = {} ;
 
+/*
+* target :
+*
+*/
 Common.SelectMenuCustomModule = ( target, opts ) => {
 
 	class SelectMenuCustom {
@@ -10,8 +14,6 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this._opts.dir = this._opts.dir || 'down' ;
 			this._opts.scroll = this._opts.scroll || false ;
 			this._opts.viewNum = this._opts.viewNum || 5 ;
-
-			console.log( this._opts ) ;
 
 			// 전역으로 사용하기 위해 선언함
 			this.originSelect = target,
@@ -31,47 +33,27 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this.eventHandler();
 
 		}
-		init(){
-
-			// select option 정보들을 itemArr 배열에 저장한다.
-			this.itemArr = Array.from({ length : this.sltOpt.length }).map( (item, i) => {
-				if( this.sltOpt[i].selected ) { this.prevIdx = i }
-				return {
-					title : this.sltOpt[i].firstChild.textContent ,
-					value : this.sltOpt[i].value ,
-					selected : this.sltOpt[i].selected ,
-				}
-			}) ;
-
-			let newSelectBox = this.makeSelectWrapper( this.itemArr ) ;
-			this.originSelect.parentNode.insertBefore( newSelectBox, this.originSelect ) ;
-			this.originSelect.style.display = 'none' ;
-
-		}
 
 		// custom 마크업 생성
 		makeSelectWrapper( items ) {
 
 			this.newWrapper = document.createElement('div') ;
-
-			let wrapClass = this._opts.dir == 'up' ? ['custom_select_wrapper', 'dirUp'] : ['custom_select_wrapper'] ;	// dir 옵션이 up 이라면 dirUp 클래스 추가
-
-			this.newWrapper.classList.add( ...wrapClass ) ;
+			this.newWrapper.classList.add( 'custom_select_wrapper' ) ;
 
 			this.newElem =
-			`<button class="btn_select_box">
+			`<button class="btn_select">
 				${this.makeOptionTitle( items )}
 			</button>
-			<div class="bx_option">
+			<ul class="bx_option">
 				${this.makeOptionList( items )}
-			</div>`
+			</ul>`
 			;
 
 			this.newWrapper.innerHTML = this.newElem;
 
-			this.newBtn = this.newWrapper.querySelector('.btn_select_box') ;
+			this.newBtn = this.newWrapper.querySelector('.btn_select') ;
 			this.newBox = this.newWrapper.querySelector('.bx_option') ;
-			this.newOptBtn = this.newBox.querySelectorAll('button') ;
+			this.newOptBtn = this.newBox.querySelectorAll('.item') ;
 
 			return this.newWrapper ;
 
@@ -86,29 +68,25 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			let optionList = '' ;
 			items.forEach(( item, idx ) => {
 				if( item.selected ) this.crntSelect = idx ;
-				optionList += `<button type="button" data-value="${item.value}" class="${item.selected ? 'active' : ''}">${item.title}</button>` ;
+				optionList += `<li data-value="${item.value}" class="${item.selected ? 'item active' : 'item'}">${item.title}</li>` ;
 			}) ;
 			return optionList;
 		}
 
-		// 옵션 여기로 따로 분리할 것임
+		// 스타일, 기능 옵션 적용
 		setStyleOption() {
 
-			console.log( 'option in' ) ;
+			// 열리는 방향
+			if( this._opts.dir == 'up' ) {
+				this.newWrapper.classList.add('dirUp') ;
+			}
 
-			// if( this._opts.scroll ) {
-				// console.log( this.newOptBtn[0].style.border  ) ;
-				// this.newOptBtn[0].style.border = '5px solid red' ;
-				// console.log( this.newOptBtn[0].offsetHeight ) ;
-				// console.log( this.newOptBtn[0].clientHeight ) ;
-				// this.newBox.style.overflowY = 'scroll' ;
-				// this.newBox.style.height = 150 + 'px' ;
-				// this._opts.viewNum
-			// }
-
-			// if( this._opts.scroll ) {
-			// 	console.log( 'scroll 옵션 있어' ) ;
-			// }
+			// 스크롤 유,무
+			if( this._opts.scroll ) {
+				let _height = this.newOptBtn[0].offsetHeight ;
+				this.newBox.style.overflowY = 'scroll' ;
+				this.newBox.style.height = _height * this._opts.viewNum + 'px' ;
+			}
 
 		}
 
@@ -162,6 +140,25 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 		}
 
+		init(){
+
+			// select option 정보들을 itemArr 배열에 저장한다.
+			this.itemArr = Array.from({ length : this.sltOpt.length }).map( (item, i) => {
+				if( this.sltOpt[i].selected ) { this.prevIdx = i }
+				return {
+					title : this.sltOpt[i].firstChild.textContent ,
+					value : this.sltOpt[i].value ,
+					selected : this.sltOpt[i].selected ,
+				}
+			}) ;
+
+			let newSelectBoxMarkup = this.makeSelectWrapper( this.itemArr ) ;
+			this.originSelect.parentNode.insertBefore( newSelectBoxMarkup, this.originSelect ) ;
+
+			this.originSelect.style.cssText = "position:absolute;left:-99999em;visibility:hidden;opacity:0;" ;
+
+		}
+
 		set selectIdx( idx ) {
 			this.optionClickHandler( idx ) ;
 		}
@@ -176,12 +173,30 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 	}
 
-
 	return (() => {
-		/*
-			select.length 로 체크 해서 하나일 경우 여러개 일경우 구분해줄려고 했는데
-			select 요소가 하나일 경우 length 사용 시 option 갯수를 가져오기 때문에 항상 1보다 크게 나온다.
-		*/
+
+		let _selectBoxOption = opts || {} ;
+
+		// target 이 없을 경우 에러로 처리한다.
+		// 타겟이 null 일 경우 나 전달하지 않았을 경우( target instanceof NodeList or Element 가 아닐 경우 ) 에러처리
+		if( target == null ) {
+			console.log('Error : 올바른 target을 설정하세요', 'target : ', target ) ;
+		} else if ( target instanceof NodeList == false && target instanceof Element == false ) {
+			console.log('Error : 올바른 target을 설정하세요. ( opts만 존재 ) ', 'target : ', target ) ;
+		} else if( target instanceof NodeList ) {	 	// DOM이 여러개일 경우 ( Nodelist로 저장되어져서 가져온다 )
+			console.log('여러개 target이 존재합니다') ;
+			[].forEach.call( target , slctBox => new SelectMenuCustom( slctBox, _selectBoxOption ) ) ;
+		} else {	// DOM이 하나일 경우
+			console.log('하나의 target이 존재합니다') ;
+			return new SelectMenuCustom( target, _selectBoxOption ) ;
+		}
+
+
+
+	})() ;
+
+
+	/*return (() => {
 
 		if( !target && !opts ) {
 
@@ -198,7 +213,7 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 		}
 
-	})() ;
+	})() ;*/
 
 } ;
 
