@@ -9,12 +9,15 @@ body {
 	padding:100px 20px;
 }
 
+.wrap_select_box{
+	display: inline-block;
+}
 
 .custom_select_wrapper{
-	$select-width : 200px;
-	$select-height : 40px;
-	$radius : 6px;
-	$border-color: #888;
+	$select-width : 150px;
+	$select-height : 30px;
+	$radius : 2px;
+	$border-color: #333;
 
 	position: relative;
 	width:$select-width;
@@ -24,24 +27,27 @@ body {
 		display: block;
 		width:100%;
 		height:$select-height;
-		padding:0 15px;
+		line-height:$select-height;
+		padding:0 10px;
 		text-align: left;
-		border:1px solid #888;
+		border:1px solid $border-color;
 		border-radius:$radius;
 		background-color: #fff;
+		font-size:13px;
+		letter-spacing: -.5px;
 		&:after{
+			content:"";
 			display:block;
 			position:absolute;
 			top:50%;
 			right:10px;
-			width:8px;
-			height:8px;
-			margin-top: -6px;
+			width:6px;
+			height:6px;
+			margin-top: -4px;
 			border-top:2px solid #333;
 			border-right:2px solid #333;
 			-webkit-transform:rotate(135deg);
 			transform:rotate(135deg);
-			content:""
 		}
 	}
 	.bx_option{
@@ -64,8 +70,9 @@ body {
 			border-bottom: 1px solid $border-color;
 			text-align: left;
 			cursor:pointer;
+			font-size:13px;
 			&:hover{
-				background-color: $border-color;
+				background-color: #eee;
 				color:#fff;
 			}
 			&.active {
@@ -80,7 +87,7 @@ body {
 			border-top: 1px solid $border-color;
 			border-bottom:0;
 			border-radius:$radius $radius 0 0;
-			button:last-child{
+			.item:last-child{
 				border-bottom: 0;
 			}
 		}
@@ -106,17 +113,20 @@ body {
 	}
 }
 
-.test_wrap{
-	button{
-		display: inline-block;
-		border:1px solid #333;
-		padding:5px 10px;
-	}
-}
-
 .custom_select{
 	position: absolute;
 	left:-9999em;
 	visibility: hidden;
 	opacity: 0;
+}
+
+.controller{
+	position: fixed;
+	left:10px;
+	bottom:10px;
+	button{
+		display: inline-block;
+		border:1px solid #333;
+		padding:5px 10px;
+	}
 }

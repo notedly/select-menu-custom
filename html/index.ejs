@@ -9,33 +9,21 @@
 <body>
 
 	<div class="wrap">
-		<div class="wrap_slt select01">
-			<dl>
-				<dt>관련사이트</dt>
-				<dd>
-					<select name="" id="test" class="custom_select">
-						<option value="https://www.google.com/">Google</option>
-						<option selected value="https://www.naver.com/">Naver</option>
-						<option value="https://www.daum.net/">Daum</option>
-						<option value="https://www.nate.com/">Nate</option>
-						<option value="http://www.ticketmonster.co.kr">Ticketmonster</option>
-						<option value="http://wemakeprice.com">wemakeprice</option>
-					</select>
-				</dd>
-			</dl>
-			<div class="test_wrap">
-				<button type="button" class="btn_set_select">set select idx</button>
-				<button type="button" class="btn_get_value">get select value</button>
-				<button type="button" class="btn_get_idx">get select idx</button>
-				<button type="button" class="btn_get_title">get select title</button>
-			</div>
-		</div>
 
+		<span class="wrap_select_box">
+			<select name="" id="test" class="custom_select select_rel_site">
+				<option value="https://www.google.com/">Google</option>
+				<option selected value="https://www.naver.com/">Naver</option>
+				<option value="https://www.daum.net/">Daum</option>
+				<option value="https://www.nate.com/">Nate</option>
+				<option value="http://www.ticketmonster.co.kr">Ticketmonster</option>
+				<option value="http://wemakeprice.com">wemakeprice</option>
+			</select>
+		</span>
+		<!-- end of wrap_select_box -->
 
-		<div class="wrap_slt select02">
-			<div>
-				<strong>검색 : </strong>
-				<select name="" id="" class="custom_select">
+		<span class="wrap_select_box">
+			<select name="" id="" class="custom_select select_board_search">
 					<option value="title">제목</option>
 					<option value="number">번호</option>
 					<option value="writer">작성자</option>
@@ -45,10 +33,19 @@
 					<option value="writer">작성자</option>
 					<option value="date">날짜</option>
 				</select>
-				<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maiores, maxime!</p>
-			</div>
+		</span>
+		<!-- end of wrap_select_box -->
+
+		<div class="controller">
+			<button type="button" class="btn_set_select">set select idx</button>
+			<button type="button" class="btn_get_value">get select value</button>
+			<button type="button" class="btn_get_idx">get select idx</button>
+			<button type="button" class="btn_get_title">get select title</button>
 		</div>
+		<!-- end of controller -->
+
 	</div>
+	<!-- end of wrap -->
 
 
 </body>

@@ -5,18 +5,16 @@ import { Common } from './ui/common' ;
 window.addEventListener('load', function(){
 
 	let customSelect01 = Common.SelectMenuCustomModule(
-		document.querySelector('.select01 select') ,
+		document.querySelector('.select_rel_site') ,
 		// document.querySelectorAll('select') ,
 		{
-			dir : 'down' ,
+			dir : 'up' ,
 			scroll : true ,
-			viewNum : 4 ,
+			viewNum : 3 ,
 		}
 	) ;
 
-	let customSelect02 = Common.SelectMenuCustomModule( document.querySelectorAll('.select02 select'), { dir : 'up' } ) ;
-
-
+	let customSelect02 = Common.SelectMenuCustomModule( document.querySelector('.select_board_search') ) ;
 
 
 	document.querySelector('.btn_set_select').addEventListener('click', () => {
