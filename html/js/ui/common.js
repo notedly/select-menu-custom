@@ -1,56 +1,64 @@
 const Common = {} ;
 
-/*
-* target :
-*
-*/
 Common.SelectMenuCustomModule = ( target, opts ) => {
-
-	// let arrSelectBox = [] ;
 
 	class SelectMenuCustom {
 		constructor( target, opts ){
 
-			// 옵션
-			this._opts = opts || {} ;
-			this._opts.dir = this._opts.dir || 'down' ; // 셀렉트가 열리는 방향
-			this._opts.scroll = this._opts.scroll || false ; // 셀렉트 리스트의 스크롤 여부
-			this._opts.viewNum = this._opts.viewNum || 5 ; // 스크롤이 있을 경우 보여지는 리스트 갯수
-
-
-			this.tag = {
-				originSelect : target ,
-				newWrapper : null , // 커스텀 셀렉트 최상위 태그
-				newElem : null , // 커스텀 셀렉트 버튼, 옵션 태그
-				newBox : null , // 커스텀 셀렉트 옵션 부모 태그
-				newBth : null , // 커스텀 셀렉트 버튼 태그
-				newOptBtn : null , // 커스텀 셀렉트 옵션 태그
+			// 옵션 목록
+			this.opts = {
+				dir : opts.dir || 'down' ,	// 셀렉트가 열리는 방향
+				scroll : opts.scroll || false ,	// 셀렉트 리스트의 스크롤 여부
+				viewNum : opts.viewNum || 5 ,	// 스크롤이 있을 경우 보여지는 리스트 갯수
 			}
 
-			console.log( this.tag ) ;
+			// 태그 목록
+			this.tag = {
+				originSelect : target ,
+				newWrapper : document.createElement('div') , // 커스텀 셀렉트 최상위 태그
+				newElem : null , // 커스텀 셀렉트 버튼, 옵션 태그
+				newBox : null , // 커스텀 셀렉트 옵션 부모 태그
+				newBtn : null , // 커스텀 셀렉트 버튼 태그
+				newOptBtn : null , // 커스텀 셀렉트 옵션 태그
+				sltOpt : null ,
+			}
 
+			// 사용되는 값 목록
+			this.value = {
+				itemArr : [], // 셀렉트 리스트를 담아놓는 배열
+				crntSelectIdx : null , // 현재 선택된 셀렉트 인덱스
+				prevIdx : 0, // 새로 선택되기 전 옵션의 인덱스
+				activeClass : 'active' , // 활성화 클래스
+				chkOpen : false ,	// 셀렉트 박스 오픈 유무
+			}
 
-			this.originSelect = target, // 오리지널 셀렉트 태그
-			this.newWrapper,	// 커스텀 셀렉트 최상위 태그
-			this.newElem, // 커스텀 셀렉트 버튼, 옵션 태그
-			this.newBox, // 커스텀 셀렉트 옵션 부모 태그
-			this.newBth, // 커스텀 셀렉트 버튼 태그
-			this.newOptBtn, // 커스텀 셀렉트 옵션 태그
-			this.itemArr = [], // 셀렉트 리스트를 담아놓는 배열
-			this.crntSelectIdx , // 현재 선택된 셀렉트 인덱스
-			this.prevIdx = 0, // 새로 선택되기 전 옵션의 인덱스
-			this.activeClass = 'active' , // 활성화 클래스
-			this.chkOpen = false ;	// 셀렉트 박스 오픈 유무
-
-			this.sltOpt = this.originSelect.querySelectorAll('option') ; // 셀렉트 옵션
+			// const { opts, tag, value } = this ;
 
 			this.init() ;
-			this.optSet() ;
-			this.evtSet();
 
-			// arrSelectBox.push( this.newWrapper ) ;
+			console.log( this ) ;
 
-			// console.log( 'arrSelectBox :', arrSelectBox ) ;
+
+			// const { opts } = this ;
+			// const value = { opts , tag , value } ;
+
+			// console.log( opts ) ;
+
+			/*
+
+			this.opts = {
+			dir : opts.dir || 'down' ,
+			scroll : opts.scroll || false ,
+			viewNum : opts.viewNum || 5
+			}
+
+			const { opts } = this ;
+
+		// this로 선언한 opts가 있고 이름만 동일하면 { opts } 형식으로 넘겨주고 받을 수 있다.
+
+			*/
+
+
 
 		}
 
@@ -58,7 +66,7 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		listTagSet( items ){
 			let optionList = '' ;
 			items.forEach(( item, idx ) => {
-				if( item.selected ) this.crntSelectIdx = idx ;
+				if( item.selected ) this.value.crntSelectIdx = idx ;
 				optionList += `<li data-value="${item.value}" class="${item.selected ? 'item active' : 'item'}">${item.title}</li>` ;
 			}) ;
 			return optionList;
@@ -67,30 +75,33 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		// 셀렉트 옵션 제어
 		optSet() {
 
+			const { opts, tag, value } = this ;
+
 			// 열리는 방향 옵션
-			if( this._opts.dir == 'up' ) {
-				this.newWrapper.classList.add('dirUp') ;
+			if( opts.dir == 'up' ) {
+				tag.newWrapper.classList.add('dirUp') ;
 			}
 
 			// 스크롤 유,무 옵션
-			if( this._opts.scroll ) {
-				let _height = this.newOptBtn[0].offsetHeight ;
-				this.newBox.style.overflowY = 'scroll' ;
-				this.newBox.style.height = _height * this._opts.viewNum + 'px' ;
+			if( opts.scroll ) {
+				let _height = tag.newOptBtn[0].offsetHeight ;
+				tag.newBox.style.overflowY = 'scroll' ;
+				tag.newBox.style.height = _height * opts.viewNum + 'px' ;
 			}
 
 		}
 
-		// 이벤트 제어
+
+		// 이벤트 제어k
 		evtSet(){
 
 			let _this = this ;
 
 			// 셀렉트 타이틀 버튼 클릭 제어
-			this.newBtn.addEventListener('click', () => this.showHideToggle() ) ;
+			this.tag.newBtn.addEventListener('click', () => this.showHideToggle() ) ;
 
 			// 셀렉트 옵션 리스트 클릭 제어
-			[].forEach.call( this.newOptBtn, (item, idx) =>{
+			[].forEach.call( this.tag.newOptBtn, (item, idx) =>{
 				item.addEventListener('click', () => {
 					_this.listClickHandler( idx ) ;
 					_this.showHideToggle();
@@ -98,7 +109,7 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			}) ;
 
 			// 오리지널 셀렉트 박스 클릭 제어
-			this.originSelect.addEventListener('click', function(e) {
+			this.tag.originSelect.addEventListener('click', function(e) {
 				_this.listClickHandler( this.selectedIndex ) ;
 				_this.showHideToggle();
 			}) ;
@@ -106,17 +117,12 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			// 셀렉트 박스를 제외한 영역 클릭 제어
 			document.body.addEventListener('click', ( e ) => {
 
-				if( e.target !== this.newBtn && this.chkOpen ) {
+				if( e.target !== this.tag.newBtn && this.value.chkOpen ) {
 					console.log('닫는다') ;
-					this.newWrapper.classList.remove( this.activeClass ) ;
-					this.chkOpen = false ;
+					this.tag.newWrapper.classList.remove( this.value.activeClass ) ;
+					this.value.chkOpen = false ;
 				}
-				/*
-					if( !e.target.closest('.custom_select_wrapper') && this.newWrapper.classList.contains( this.activeClass ) ){
-						this.newWrapper.classList.remove( this.activeClass ) ;
-						this.chkOpen = false ;
-					}
-				*/
+
 			}) ;
 
 		}
@@ -124,12 +130,12 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		// 셀렉트 박스 토글
 		showHideToggle(){
 
-			if( this.newWrapper.classList.contains( this.activeClass ) ){
-				this.newWrapper.classList.remove( this.activeClass ) ;
-				this.chkOpen = false ;
+			if( this.tag.newWrapper.classList.contains( this.value.activeClass ) ){
+				this.tag.newWrapper.classList.remove( this.value.activeClass ) ;
+				this.value.chkOpen = false ;
 			} else {
-				this.newWrapper.classList.add( this.activeClass ) ;
-				this.chkOpen = true ;
+				this.tag.newWrapper.classList.add( this.value.activeClass ) ;
+				this.value.chkOpen = true ;
 			}
 
 		}
@@ -137,49 +143,57 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		// 셀렉트 박스 옵션 클릭
 		listClickHandler( crntIdx ){
 
-			this.originSelect.selectedIndex = crntIdx ;
-			this.itemArr[this.prevIdx].selected = false ;
-			this.newOptBtn[this.prevIdx].classList.remove('active') ;
-			this.newOptBtn[crntIdx].classList.add('active') ;
-			this.itemArr[crntIdx].selected = true ;
-			this.newBtn.textContent = this.itemArr[crntIdx].title ;
-			this.prevIdx = crntIdx ;
+			this.tag.originSelect.selectedIndex = crntIdx ;
+			this.value.itemArr[this.value.prevIdx].selected = false ;
+			this.tag.newOptBtn[this.value.prevIdx].classList.remove('active') ;
+			this.tag.newOptBtn[crntIdx].classList.add('active') ;
+			this.value.itemArr[crntIdx].selected = true ;
+			this.tag.newBtn.textContent = this.value.itemArr[crntIdx].title ;
+			this.value.prevIdx = crntIdx ;
 
 		}
 
 		init(){
 
-			this.newWrapper = document.createElement('div') ;
-			this.newWrapper.classList.add( 'custom_select_wrapper' ) ;
+			const { opts, tag, value } = this ;
+
+			// this.tag.newWrapper = document.createElement('div') ;
+			this.tag.newWrapper.classList.add( 'custom_select_wrapper' ) ;
+			this.tag.sltOpt = this.tag.originSelect.querySelectorAll('option') ; // 셀렉트 옵션
 
 			// 오리지널 select option 정보들을 itemArr 배열에 저장한다.
-			this.itemArr = Array.from({ length : this.sltOpt.length }).map( (item, i) => {
-				if( this.sltOpt[i].selected ) { this.prevIdx = i }
+			this.value.itemArr = Array.from({ length : this.tag.sltOpt.length }).map( (item, i) => {
+				if( this.tag.sltOpt[i].selected ) { this.value.prevIdx = i }
 				return {
-					title : this.sltOpt[i].firstChild.textContent ,
-					value : this.sltOpt[i].value ,
-					selected : this.sltOpt[i].selected ,
+					title : this.tag.sltOpt[i].firstChild.textContent ,
+					value : this.tag.sltOpt[i].value ,
+					selected : this.tag.sltOpt[i].selected ,
 				}
 			}) ;
 
-			let crntSelected = this.itemArr.filter( item => item.selected ) ;
+			let crntSelected = this.value.itemArr.filter( item => item.selected ) ;
 
-			this.newElem =
+			this.tag.newElem =
 			`<button class="btn_select">
 			${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
 			</button>
 			<ul class="bx_option">
-				${this.listTagSet( this.itemArr )}
+				${this.listTagSet( this.value.itemArr )}
 			</ul>` ;
 
-			this.newWrapper.innerHTML = this.newElem;
+			this.tag.newWrapper.innerHTML = this.tag.newElem;
 
-			this.newBtn = this.newWrapper.querySelector('.btn_select') ;
-			this.newBox = this.newWrapper.querySelector('.bx_option') ;
-			this.newOptBtn = this.newBox.querySelectorAll('.item') ;
+			this.tag.newBtn = this.tag.newWrapper.querySelector('.btn_select') ;
+			this.tag.newBox = this.tag.newWrapper.querySelector('.bx_option') ;
+			this.tag.newOptBtn = this.tag.newBox.querySelectorAll('.item') ;
 
-			this.originSelect.parentNode.insertBefore( this.newWrapper, this.originSelect ) ;
-			this.originSelect.style.cssText = "position:absolute;left:-99999em;visibility:hidden;opacity:0;" ;
+			this.tag.originSelect.parentNode.insertBefore( this.tag.newWrapper, this.tag.originSelect ) ;
+			this.tag.originSelect.style.cssText = "position:absolute;left:-99999em;visibility:hidden;opacity:0;" ;
+
+			// console.log( opts, tag, value ) ;
+
+			this.optSet() ;
+			this.evtSet();
 
 		}
 
@@ -189,9 +203,9 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 		get crntSelectInfo(){
 			return {
-				idx : this.prevIdx ,
-				title : this.itemArr[this.prevIdx].title ,
-				value : this.itemArr[this.prevIdx].value ,
+				idx : this.value.prevIdx ,
+				title : this.value.itemArr[this.value.prevIdx].title ,
+				value : this.value.itemArr[this.value.prevIdx].value ,
 			}
 		}
 

@@ -6,15 +6,13 @@ window.addEventListener('load', function(){
 
 	let customSelect01 = Common.SelectMenuCustomModule(
 		document.querySelector('.select_rel_site') ,
-		// document.querySelectorAll('select') ,
-		{
-			dir : 'down' ,
-			// scroll : true ,
-			// viewNum : 3 ,
-		}
 	) ;
 
-	// let customSelect02 = Common.SelectMenuCustomModule( document.querySelector('.select_board_search') ) ;
+	let customSelect02 = Common.SelectMenuCustomModule( document.querySelector('.select_board_search') , {
+			dir : 'down' ,
+			scroll : true ,
+			viewNum : 3 ,
+		}) ;
 
 
 	document.querySelector('.btn_set_select').addEventListener('click', () => {
