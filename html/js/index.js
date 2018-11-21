@@ -8,13 +8,13 @@ window.addEventListener('load', function(){
 		document.querySelector('.select_rel_site') ,
 		// document.querySelectorAll('select') ,
 		{
-			dir : 'up' ,
-			scroll : true ,
-			viewNum : 3 ,
+			dir : 'down' ,
+			// scroll : true ,
+			// viewNum : 3 ,
 		}
 	) ;
 
-	let customSelect02 = Common.SelectMenuCustomModule( document.querySelector('.select_board_search') ) ;
+	// let customSelect02 = Common.SelectMenuCustomModule( document.querySelector('.select_board_search') ) ;
 
 
 	document.querySelector('.btn_set_select').addEventListener('click', () => {
@@ -29,6 +29,7 @@ window.addEventListener('load', function(){
 	document.querySelector('.btn_get_title').addEventListener('click', () => {
 		console.log( customSelect01.crntSelectInfo.title ) ;
 	}) ;
+
 
 
 }) ;

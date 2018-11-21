@@ -6,6 +6,8 @@ const Common = {} ;
 */
 Common.SelectMenuCustomModule = ( target, opts ) => {
 
+	// let arrSelectBox = [] ;
+
 	class SelectMenuCustom {
 		constructor( target, opts ){
 
@@ -14,6 +16,19 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this._opts.dir = this._opts.dir || 'down' ; // 셀렉트가 열리는 방향
 			this._opts.scroll = this._opts.scroll || false ; // 셀렉트 리스트의 스크롤 여부
 			this._opts.viewNum = this._opts.viewNum || 5 ; // 스크롤이 있을 경우 보여지는 리스트 갯수
+
+
+			this.tag = {
+				originSelect : target ,
+				newWrapper : null , // 커스텀 셀렉트 최상위 태그
+				newElem : null , // 커스텀 셀렉트 버튼, 옵션 태그
+				newBox : null , // 커스텀 셀렉트 옵션 부모 태그
+				newBth : null , // 커스텀 셀렉트 버튼 태그
+				newOptBtn : null , // 커스텀 셀렉트 옵션 태그
+			}
+
+			console.log( this.tag ) ;
+
 
 			this.originSelect = target, // 오리지널 셀렉트 태그
 			this.newWrapper,	// 커스텀 셀렉트 최상위 태그
@@ -25,12 +40,17 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this.crntSelectIdx , // 현재 선택된 셀렉트 인덱스
 			this.prevIdx = 0, // 새로 선택되기 전 옵션의 인덱스
 			this.activeClass = 'active' , // 활성화 클래스
+			this.chkOpen = false ;	// 셀렉트 박스 오픈 유무
 
 			this.sltOpt = this.originSelect.querySelectorAll('option') ; // 셀렉트 옵션
 
 			this.init() ;
 			this.optSet() ;
 			this.evtSet();
+
+			// arrSelectBox.push( this.newWrapper ) ;
+
+			// console.log( 'arrSelectBox :', arrSelectBox ) ;
 
 		}
 
@@ -66,10 +86,10 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 			let _this = this ;
 
-			// 셀렉트 타이틀 버튼 클릭시 이벤트
+			// 셀렉트 타이틀 버튼 클릭 제어
 			this.newBtn.addEventListener('click', () => this.showHideToggle() ) ;
 
-			// 셀렉트 옵션 버튼 클릭시 이벤트
+			// 셀렉트 옵션 리스트 클릭 제어
 			[].forEach.call( this.newOptBtn, (item, idx) =>{
 				item.addEventListener('click', () => {
 					_this.listClickHandler( idx ) ;
@@ -77,17 +97,26 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 				})
 			}) ;
 
-			// 오리지널 셀렉트 박스 클릭시 이벤트
+			// 오리지널 셀렉트 박스 클릭 제어
 			this.originSelect.addEventListener('click', function(e) {
 				_this.listClickHandler( this.selectedIndex ) ;
 				_this.showHideToggle();
 			}) ;
 
-			// 셀렉트 박스를 제외한 다른 곳 클릭시 박스 닫힘
+			// 셀렉트 박스를 제외한 영역 클릭 제어
 			document.body.addEventListener('click', ( e ) => {
-				if( !e.target.closest('.custom_select_wrapper') && this.newWrapper.classList.contains( this.activeClass ) ){
+
+				if( e.target !== this.newBtn && this.chkOpen ) {
+					console.log('닫는다') ;
 					this.newWrapper.classList.remove( this.activeClass ) ;
+					this.chkOpen = false ;
 				}
+				/*
+					if( !e.target.closest('.custom_select_wrapper') && this.newWrapper.classList.contains( this.activeClass ) ){
+						this.newWrapper.classList.remove( this.activeClass ) ;
+						this.chkOpen = false ;
+					}
+				*/
 			}) ;
 
 		}
@@ -95,7 +124,13 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		// 셀렉트 박스 토글
 		showHideToggle(){
 
-			this.newWrapper.classList.contains( this.activeClass ) ? this.newWrapper.classList.remove( this.activeClass ) : this.newWrapper.classList.add( this.activeClass ) ;
+			if( this.newWrapper.classList.contains( this.activeClass ) ){
+				this.newWrapper.classList.remove( this.activeClass ) ;
+				this.chkOpen = false ;
+			} else {
+				this.newWrapper.classList.add( this.activeClass ) ;
+				this.chkOpen = true ;
+			}
 
 		}
 
@@ -176,12 +211,12 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			console.log('Error : 올바른 target을 설정하세요. ( opts만 존재 ) ', 'target : ', target ) ;
 		} else if( target instanceof NodeList) {	 	// DOM이 여러개일 경우 ( Nodelist로 저장되어져서 가져온다 )
 
-			console.log('target이 존재합니다') ;
+			// console.log('target이 존재합니다') ;
 			[].forEach.call( target , slctBox => new SelectMenuCustom( slctBox, _selectBoxOption ) ) ;
 
 		} else {	// DOM이 하나일 경우
 
-			console.log('target이 존재합니다') ;
+			// console.log('target이 존재합니다') ;
 			return new SelectMenuCustom( target, _selectBoxOption ) ;
 
 		}
