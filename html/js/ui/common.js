@@ -2,6 +2,11 @@ const Common = {} ;
 
 Common.SelectMenuCustomModule = ( target, opts ) => {
 
+ 	const comm = {
+ 		activeClass : 'active' ,
+ 		customSelectBox : [] , // localStorage. session
+ 	} ;
+
 	class SelectMenuCustom {
 		constructor( target, opts ){
 			this.optSet( opts ) ;
@@ -20,9 +25,6 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 				opts , tag , value
 				handler
 			*/
-
-
-
 		}
 
 		show(){
@@ -114,15 +116,20 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			}) ;
 
 			// 셀렉트 박스를 제외한 영역 클릭 제어
-			document.body.addEventListener('click', ( e ) => {
-
-				if( e.target !== tag.newBtn && value.chkOpen ) {
-					console.log('닫는다') ;
-					tag.newWrapper.classList.remove( value.activeClass ) ;
-					value.chkOpen = false ;
-				}
-
-			}) ;
+			/*if ( !document.body.isSelectEvt ) {
+				document.body.isSelectEvt = 1 ;
+				document.body.addEventListener('click', ( e ) => {
+					console.log('a') ;
+					console.log( e.target) ;
+					console.log( tag.newBtn) ;
+					console.log( value.chkOpen) ;
+					if( e.target !== tag.newBtn && value.chkOpen ) {
+						console.log('닫는다') ;
+						tag.newWrapper.classList.remove( value.activeClass ) ;
+						value.chkOpen = false ;
+					}
+				}) ;
+			}*/
 			// window.addEventListener( 'scroll', this.positionSet ) ;
 		}
 
@@ -163,11 +170,8 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 		}
 
 		init(){
-
 			const { opts, tag, value } = this ;
-			const info = { opts, tag, value };
-
-			console.log( info ) ;
+			let crntSelected = null ;
 
 			tag.newWrapper.classList.add( 'custom_select_wrapper' ) ;
 			tag.sltOpt = tag.originSelect.querySelectorAll('option') ; // 셀렉트 옵션
@@ -182,15 +186,16 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 				}
 			}) ;
 
-			let crntSelected = value.itemArr.filter( item => item.selected ) ;
+			crntSelected = value.itemArr.filter( item => item.selected ) ;
 
 			tag.newElem =
-			`<button class="btn_select">
-				${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
-			</button>
-			<ul class="bx_option">
-				${this.listTagSet( value.itemArr )}
-			</ul>` ;
+				`<button class="btn_select">
+					${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
+				</button>
+				<ul class="bx_option">
+					${this.listTagSet( value.itemArr )}
+				</ul>`
+			;
 
 			tag.newWrapper.innerHTML = tag.newElem;
 
@@ -199,13 +204,17 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			tag.newOptBtn = tag.newBox.querySelectorAll('.item') ;
 
 			tag.originSelect.parentNode.insertBefore( tag.newWrapper, tag.originSelect ) ;
-			tag.originSelect.style.cssText = "position:absolute;left:-99999em;visibility:hidden;opacity:0;" ;
-			// console.log( opts, tag, value ) ;
+			tag.originSelect.style.cssText = "position:absolute;visibility:hidden;" ;
 
-			this.optSetUp( info ) ;
-			this.evtSet( info ) ;
-			// this.positionSet( info ) ;
+			// console.log( '?' , comm.customSelectBox ) ;
+			comm.customSelectBox.push( tag.newWrapper ) ;
+			// console.log( comm.customSelectBox ) ;
 
+			(( opts ) => {
+				this.optSetUp(opts) ;
+				this.evtSet(opts) ;
+				this.positionSet(opts) ;
+			})({ opts , tag , value }) ;
 		}
 
 		set selectIdx( idx ) {
@@ -219,10 +228,19 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 				value : this.value.itemArr[this.value.prevIdx].value ,
 			}
 		}
-
 	}
 
 	return (() => {
+
+		/*window.addEventListener( 'click' , ( e ) => {
+			console.log( 'aaaaaaaaaaaaaaaaaa' , comm.customSelectBox ) ;
+
+			[].forEach.call( comm.customSelectBox , slct => {
+				if ( !slct.contains( e.target ) ) }{
+					slct.classList.remove( comm.activeClass ) ;
+				}
+			}) ;
+		})*/
 
 		let _selectBoxOption = opts || {} ;
 
