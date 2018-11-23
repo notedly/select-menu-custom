@@ -7,10 +7,26 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this.optSet( opts ) ;
 			this.tagSet() ;
 			this.valueSet() ;
+
+			// this.handler = {
+			// 	showHideToggle : this.showHideToggle ,
+			// }
+
 			this.init() ;
 
 			// const { opts, tag, value } = this ;
 
+			/*
+				opts , tag , value
+				handler
+			*/
+
+
+
+		}
+
+		show(){
+			console.log( 'show show' ) ;
 		}
 
 		// 태그 변수 세팅
@@ -48,16 +64,6 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			}
 		}
 
-		// 옵션 리스트 마크업 생성
-		listTagSet( items ){
-			let optionList = '' ;
-			items.forEach(( item, idx ) => {
-				if( item.selected ) this.value.crntSelectIdx = idx ;
-				optionList += `<li data-value="${item.value}" class="${item.selected ? 'item active' : 'item'}">${item.title}</li>` ;
-			}) ;
-			return optionList;
-		}
-
 		// 셀렉트 옵션 제어
 		optSetUp( info ) {
 			const { opts, tag, value } = info ;
@@ -75,6 +81,15 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			}
 		}
 
+		// 옵션 리스트 마크업 생성
+		listTagSet( items ){
+			let optionList = '' ;
+			items.forEach(( item, idx ) => {
+				if( item.selected ) this.value.crntSelectIdx = idx ;
+				optionList += `<li data-value="${item.value}" class="${item.selected ? 'item active' : 'item'}">${item.title}</li>` ;
+			}) ;
+			return optionList;
+		}
 
 		// 이벤트 제어
 		evtSet( info ){
@@ -152,6 +167,8 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			const { opts, tag, value } = this ;
 			const info = { opts, tag, value };
 
+			console.log( info ) ;
+
 			tag.newWrapper.classList.add( 'custom_select_wrapper' ) ;
 			tag.sltOpt = tag.originSelect.querySelectorAll('option') ; // 셀렉트 옵션
 
@@ -169,7 +186,7 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 
 			tag.newElem =
 			`<button class="btn_select">
-			${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
+				${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
 			</button>
 			<ul class="bx_option">
 				${this.listTagSet( value.itemArr )}
@@ -188,7 +205,6 @@ Common.SelectMenuCustomModule = ( target, opts ) => {
 			this.optSetUp( info ) ;
 			this.evtSet( info ) ;
 			// this.positionSet( info ) ;
-
 
 		}
 
