@@ -1,10 +1,10 @@
 import React , { Component } from 'react' ;
 import ReactDOM , { render } from 'react-dom' ;
-import { Common } from './ui/common' ;
+import { CustomSelectBox } from './ui/common' ;
 
 window.addEventListener('load', function(){
-
-	let customSelect01 = Common.SelectMenuCustomModule(
+/*
+	let customSelect01 = CustomSelectBox(
 		document.querySelector('.select_rel_site') ,
 	) ;
 
@@ -14,8 +14,8 @@ window.addEventListener('load', function(){
 			viewNum : 3 ,
 		}
 	) ;
-
-
+*/
+/*
 	let customSelect03 = Common.SelectMenuCustomModule(
 		document.querySelector('.select_board_search2') ,
 	) ;
@@ -34,7 +34,7 @@ window.addEventListener('load', function(){
 	}) ;
 
 
-
+*/
 	/*const Yaho = (() => {
 		console.log('aaaa');
 		var a = [] ;
@@ -193,6 +193,42 @@ window.addEventListener('load', function(){
    // }
    //  })() ;
 
+     /* const Yaho = (() => {
+
+      let arr = [] ;
+
+      const InsideYaho = () => {
+         class Yaho {
+            constructor () {
+               console.log( 'abc' ) ;
+               arr.push( 'aaaaaa' ) ;
+            }
+
+         }
+         clkck {
+            aasdasd( this ) ;
+         }
+
+         Yaho.prototype = {
+            getYaho : () => {
+               console.log( 'getYaho' ) ;
+               console.log( arr ) ;
+            }
+         }
+
+         return new Yaho ;
+      }
+
+      return InsideYaho ;
+   })() ;
+
+   let tmp1 = Yaho() ;
+   let tmp2 = Yaho() ;
+   let tmp3 = Yaho() ;
+   let tmp4 = Yaho() ;
+   console.log( tmp4.getYaho() ) ;
+   console.log( tmp1.getYaho() ) ;
+   window.tmp1 = tmp1 ; */
 
 
 
