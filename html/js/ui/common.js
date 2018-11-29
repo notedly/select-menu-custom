@@ -7,6 +7,7 @@ const CustomSelectBox = (() => {
 	const comn = {
 		selectBoxAll : [] ,
 		activeClass : 'active' ,
+		num : 0 ,
 	} ;
 
 	const SelectBoxWrap = ( dom, opts ) => {
@@ -15,7 +16,10 @@ const CustomSelectBox = (() => {
 
 			static data = {};
 
-			constructor( target, opts ){
+			constructor( tg, opts ){
+
+				comn.num++ ;
+				console.log( 'select num :', comn.num ) ;
 
 				// 전달받은 옵션을 저장합니다.
 				let options = opts || {} ;
@@ -27,7 +31,7 @@ const CustomSelectBox = (() => {
 
 				// 사용할 태그들을 저장합니다.
 				this.tags = {
-					orgSlt : target ,
+					orgSlt : tg ,
 					newWrap : document.createElement('div') , // 커스텀 셀렉트 최상위 태그
 					newElem : null , // 커스텀 셀렉트 버튼, 옵션 태그
 					newBox : null , // 커스텀 셀렉트 옵션 부모 태그
@@ -43,7 +47,9 @@ const CustomSelectBox = (() => {
 					crtSltIdx : 0 , // 현재 선택된 옵션 인덱스
 					prvSltIdx : 0, // 선택하기 전 옵션의 인덱스
 					chkOpen : false ,	// 셀렉트 박스 오픈 유무
+					isBodyEvt : false ,
 				}
+
 				this.value.sltOptArr = Array.from({ length : this.tags.sltOpt.length }).map( ( item, i ) => {
 					if( this.tags.sltOpt[i].selected ) {
 						this.value.crtSltIdx = i
@@ -72,7 +78,7 @@ const CustomSelectBox = (() => {
 
 			// 이벤트 모음
 			setEvt = () => {
-				let _this = this ;
+				let _this = this ,f ;
 
 				// 셀렉트 타이틀 버튼 클릭 제어
 				SelectBox.data.tags.newBtn.addEventListener('click', () => this.showHideToggle() ) ;
@@ -82,13 +88,86 @@ const CustomSelectBox = (() => {
 					item.addEventListener('click', () => {
 						this.optsClickHandler( idx ) ;
 						this.showHideToggle();
+						// SelectBox.data.tags.newWrap.removeEventListener('focusout', this.showHideToggle) ;
 					})
 				}) ;
+
 				// 오리지널 셀렉트 박스 클릭 제어
 				SelectBox.data.tags.orgSlt.addEventListener('click', function(){
 					_this.optsClickHandler( this.selectedIndex ) ;
 					_this.showHideToggle();
 				}) ;
+
+
+				// SelectBox.data.tags.newWrap.addEventListener('focusout', this.showHideToggle ) ;
+
+				/*SelectBox.data.tags.newWrap.addEventListener('focusout', function(e){
+					if( SelectBox.data.value.chkOpen ) {
+						SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
+						SelectBox.data.value.chkOpen = false ;
+					}
+				} ) ;*/
+
+
+						// SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
+						// SelectBox.data.value.chkOpen = false ;
+
+				/*SelectBox.data.tags.newWrap.addEventListener('blur', function(){
+					if( SelectBox.data.value.chkOpen ) {
+						SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
+						SelectBox.data.value.chkOpen = false ;
+					}
+				}) ;
+
+				console.log( SelectBox.data.tags.newWrap ) ;*/
+
+				// document.body.addEventListener('click', () => {
+				// 	console.log( comn.selectBoxAll ) ;
+				// }) ;
+
+				// if ( !document.body.isSelectEvt ) {
+
+				// 	document.body.isSelectEvt = 1 ;
+
+				// 	document.body.addEventListener('click', ( e ) => {
+				// 		if( e.target !== SelectBox.data.tags.newBtn && SelectBox.data.value.chkOpen ) {
+				// 			console.log('닫는다') ;
+				// 			SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
+				// 			SelectBox.data.value.chkOpen = false ;
+				// 		}
+				// 		console.log('************ : ', comn.selectBoxAll ) ;
+				// 		// console.log( 'body 클릭!', e.target , SelectBox.data.tags.newBtn , SelectBox.data.value.chkOpen ) ;
+				// 	}) ;
+				// }
+
+				/*if( !SelectBox.data.value.isBodyEvt ){
+					console.log( 'in' ) ;
+
+					SelectBox.data.value.isBodyEvt = 1 ;
+
+					document.body.addEventListener('click', function(){
+						// console.log('************ : ', comn.selectBoxAll ) ;
+						// console.log( 'body 이벤트 :', SelectBox.data.value.isBodyEvt ) ;
+						console.log( 'body click in' ) ;
+					}) ;
+				}*/
+
+				/*if ( !comn.chkOpen ) {
+
+					comn.chkOpen = 1 ;
+
+					document.body.addEventListener('click', ( e ) => {
+						// console.log( 'tg :', e.target ) ;
+						if( e.target !== SelectBox.data.tags.newBtn && SelectBox.data.value.chkOpen ) {
+							console.log('닫는다') ;
+							SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
+							SelectBox.data.value.chkOpen = false ;
+						}
+						console.log( '열려있나 ? ', SelectBox.data.value.chkOpen ) ;
+
+					}) ;
+				}*/
+
 			}
 
 			optsClickHandler = ( crntIdx ) => {
@@ -105,9 +184,11 @@ const CustomSelectBox = (() => {
 				if( SelectBox.data.tags.newWrap.classList.contains( comn.activeClass ) ){
 					SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
 					SelectBox.data.value.chkOpen = false ;
+					SelectBox.data.value.isBodyEvt = false ;
 				} else {
 					SelectBox.data.tags.newWrap.classList.add( comn.activeClass ) ;
 					SelectBox.data.value.chkOpen = true ;
+					SelectBox.data.value.isBodyEvt = true ;
 				}
 			}
 
@@ -138,10 +219,9 @@ const CustomSelectBox = (() => {
 				// 커스텀 마크업 생성
 				SelectBox.data.tags.newWrap.classList.add( 'custom_select_wrapper' ) ;
 				crntSelected = SelectBox.data.value.itemArr.filter( item => item.selected ) ;
-
 				SelectBox.data.tags.newElem =
 					`<button class="btn_select">
-						${ crntSelected.length > 0 ? crntSelected[0].title : '선택' }
+						${ crntSelected[0].title }
 					</button>
 					<ul class="bx_option">
 						${this.setOptionList()}
@@ -158,29 +238,13 @@ const CustomSelectBox = (() => {
 			}
 
 			init = () => {
-
 				const { tags, opts, value } = this ;
-				// const data = { tags, opts, value } ;
 				SelectBox.data = { tags, opts, value } ;
-
-				console.log( SelectBox.data ) ;
 
 				this.setCustomMarkUp() ;
 				this.setOptionApply() ;
 				this.setEvt() ;
 			}
-
-			/*set selectIdx( idx ) {
-				this.optsClickHandler( idx ) ;
-			}
-
-			get crntSelectInfo(){
-				return {
-					idx : this.value.prevIdx ,
-					title : this.value.itemArr[this.value.prevIdx].title ,
-					value : this.value.itemArr[this.value.prevIdx].value ,
-				}
-			}*/
 
 		} // end of SelectBox
 
@@ -190,19 +254,22 @@ const CustomSelectBox = (() => {
 			}
 		}
 
+		return new SelectBox( dom, opts ) ;
+	};
+
+	/*document.body.addEventListener('click', function(){
+		console.log( comn.selectBoxAll ) ;
+	}) ;*/
+
+	return ( dom, opts ) => {
 		if( dom instanceof NodeList ) {
-			console.log('여러개 전달') ;
 			[].forEach.call( dom, sltBox => {
-				return new SelectBox( sltBox, opts ) ;
+				return SelectBoxWrap( sltBox, opts ) ;
 			}) ;
 		} else {
-			console.log('한개 전달') ;
-			return new SelectBox( dom, opts ) ;
+			return SelectBoxWrap( dom, opts ) ;
 		}
-
 	}
-
-	return SelectBoxWrap ;
 
 })() ;
 
@@ -210,8 +277,14 @@ const CustomSelectBox = (() => {
 window.addEventListener('load', function(){
 	let customSelect01 = CustomSelectBox( document.querySelector('.select_rel_site') , { dir : 'down' } ) ;
 	let customSelect02 = CustomSelectBox( document.querySelector('.select_board_search') , { dir : 'up', scroll : true , viewNum : 3 } ) ;
-	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.select_board_search2') ) ;
 	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.custom_select') ) ;
+
+
+
+	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.select_board_search2') ) ;
+
+	// let a = CustomSelectBox() ;
+	// console.log( a ) ;
 
 	// customSelect02.viewSelectBoxAll() ;
 	// customSelect01.getAllSelect() ;
@@ -220,90 +293,5 @@ window.addEventListener('load', function(){
 
 }) ;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const Temp = function () {
-// const tag = Symbol( 'tag' ) ;
-// const yaho = Symbol() ;
-// const tagSet = Symbol( 'tagSet' ) ;
-// const evtSet = Symbol( 'evtSet' ) ;
-
-// class Temp {
-// [tag] = {} ;
-
-// constructor () {
-// this.init() ;
-// this.c = 'c' ;
-// }
-
-// [tagSet] () {
-// this[tag].btn = document.querySelector( '[data-tag=btn]' ) ;
-// }
-// [evtSet] () {
-// this[tag].btn.addEventListener( 'click' , function () {
-// console.log( 'a' ) ;
-// }) ;
-// }
-
-// init () {
-// console.log( 'init in' ) ;
-// this[tagSet]() ;
-// this[evtSet]() ;
-// }
-// }
-
-// Object.assign( Temp.prototype , {
-// a : 'a' ,
-// b : 'b' ,
-// }) ;
-
-// return new Temp ;
-// }
-
-// window.addEventListener( 'load' , () => {
-// var temp = new Temp ;
-// window.temp = temp ;
-// }) ;
-
-
-
-// class Temp {
-// 	[tag] = {} ;
-
-// 	constructor () {
-// 	this.init() ;
-// 	}
-
-// 	[tagSet] () {
-// 	this[tag].btn = document.querySelector( '[data-tag=btn]' ) ;
-// 	}
-// 	[evtSet] () {
-// 	this[tag].btn.addEventListener( 'click' , function () {
-// 	console.log( this ) ;
-// 	}) ;
-// 	}
-
-// 	init () {
-// 	console.log( 'init in' ) ;
-// 	this[tagSet]() ;
-// 	this[evtSet]() ;
-// 	}
-// }
-
-// window.addEventListener( 'load' , () => {
-// 	var temp = new Temp ;
-// 	window.temp = temp ;
-// }) ;
 
 export { CustomSelectBox } ;
