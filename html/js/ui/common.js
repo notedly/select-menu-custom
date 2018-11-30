@@ -1,13 +1,11 @@
 const Common = {} ;
 
-
-
 const CustomSelectBox = (() => {
 
 	const comn = {
 		selectBoxAll : [] ,
 		activeClass : 'active' ,
-		num : 0 ,
+		num : 0
 	} ;
 
 	const SelectBoxWrap = ( dom, opts ) => {
@@ -76,6 +74,12 @@ const CustomSelectBox = (() => {
 
 			aa = () => {}
 
+			/*
+			기능을 넘길 때 하나의 모듈로 만들어서 관리하면 좋다.
+			hander = {
+				optsClickHandler : this.optsClickHandler ,
+			}*/
+
 			// 이벤트 모음
 			setEvt = () => {
 				let _this = this ,f ;
@@ -85,10 +89,11 @@ const CustomSelectBox = (() => {
 
 				// 셀렉트 옵션 리스트 클릭 제어
 				[].forEach.call( SelectBox.data.tags.newOptBtn, (item, idx) =>{
-					item.addEventListener('click', () => {
-						this.optsClickHandler( idx ) ;
+					item.addEventListener('click', ( e ) => {
+						this.optsClickHandler( idx );
 						this.showHideToggle();
-						// SelectBox.data.tags.newWrap.removeEventListener('focusout', this.showHideToggle) ;
+						e.preventDefault();
+						e.stopPropagation();
 					})
 				}) ;
 
@@ -98,80 +103,10 @@ const CustomSelectBox = (() => {
 					_this.showHideToggle();
 				}) ;
 
-
-				// SelectBox.data.tags.newWrap.addEventListener('focusout', this.showHideToggle ) ;
-
-				/*SelectBox.data.tags.newWrap.addEventListener('focusout', function(e){
-					if( SelectBox.data.value.chkOpen ) {
-						SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-						SelectBox.data.value.chkOpen = false ;
-					}
-				} ) ;*/
-
-
-						// SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-						// SelectBox.data.value.chkOpen = false ;
-
-				/*SelectBox.data.tags.newWrap.addEventListener('blur', function(){
-					if( SelectBox.data.value.chkOpen ) {
-						SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-						SelectBox.data.value.chkOpen = false ;
-					}
-				}) ;
-
-				console.log( SelectBox.data.tags.newWrap ) ;*/
-
-				// document.body.addEventListener('click', () => {
-				// 	console.log( comn.selectBoxAll ) ;
-				// }) ;
-
-				// if ( !document.body.isSelectEvt ) {
-
-				// 	document.body.isSelectEvt = 1 ;
-
-				// 	document.body.addEventListener('click', ( e ) => {
-				// 		if( e.target !== SelectBox.data.tags.newBtn && SelectBox.data.value.chkOpen ) {
-				// 			console.log('닫는다') ;
-				// 			SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-				// 			SelectBox.data.value.chkOpen = false ;
-				// 		}
-				// 		console.log('************ : ', comn.selectBoxAll ) ;
-				// 		// console.log( 'body 클릭!', e.target , SelectBox.data.tags.newBtn , SelectBox.data.value.chkOpen ) ;
-				// 	}) ;
-				// }
-
-				/*if( !SelectBox.data.value.isBodyEvt ){
-					console.log( 'in' ) ;
-
-					SelectBox.data.value.isBodyEvt = 1 ;
-
-					document.body.addEventListener('click', function(){
-						// console.log('************ : ', comn.selectBoxAll ) ;
-						// console.log( 'body 이벤트 :', SelectBox.data.value.isBodyEvt ) ;
-						console.log( 'body click in' ) ;
-					}) ;
-				}*/
-
-				/*if ( !comn.chkOpen ) {
-
-					comn.chkOpen = 1 ;
-
-					document.body.addEventListener('click', ( e ) => {
-						// console.log( 'tg :', e.target ) ;
-						if( e.target !== SelectBox.data.tags.newBtn && SelectBox.data.value.chkOpen ) {
-							console.log('닫는다') ;
-							SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-							SelectBox.data.value.chkOpen = false ;
-						}
-						console.log( '열려있나 ? ', SelectBox.data.value.chkOpen ) ;
-
-					}) ;
-				}*/
-
 			}
 
-			optsClickHandler = ( crntIdx ) => {
-				SelectBox.data.tags.orgSlt.selectedIndex = crntIdx ;
+			optsClickHandler = ( crntIdx ) =>
+{				SelectBox.data.tags.orgSlt.selectedIndex = crntIdx ;
 				SelectBox.data.value.itemArr[SelectBox.data.value.prvSltIdx].selected = false ;
 				SelectBox.data.tags.newOptBtn[SelectBox.data.value.prvSltIdx].classList.remove( comn.activeClass ) ;
 				SelectBox.data.tags.newOptBtn[crntIdx].classList.add( comn.activeClass ) ;
@@ -181,11 +116,11 @@ const CustomSelectBox = (() => {
 			}
 
 			showHideToggle = () => {
-				if( SelectBox.data.tags.newWrap.classList.contains( comn.activeClass ) ){
+				if( SelectBox.data.tags.newWrap.classList.contains( comn.activeClass ) ){	// close
 					SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
 					SelectBox.data.value.chkOpen = false ;
 					SelectBox.data.value.isBodyEvt = false ;
-				} else {
+				} else {	// open
 					SelectBox.data.tags.newWrap.classList.add( comn.activeClass ) ;
 					SelectBox.data.value.chkOpen = true ;
 					SelectBox.data.value.isBodyEvt = true ;
@@ -248,11 +183,11 @@ const CustomSelectBox = (() => {
 
 		} // end of SelectBox
 
-		SelectBox.prototype = {
+		/*SelectBox.prototype = {
 			viewSelectBoxAll(){
 				console.log( '전체 커스텀 셀렉트 박스 : ', comn.selectBoxAll ) ;
 			}
-		}
+		}*/
 
 		return new SelectBox( dom, opts ) ;
 	};
@@ -262,6 +197,19 @@ const CustomSelectBox = (() => {
 	}) ;*/
 
 	return ( dom, opts ) => {
+
+		if ( !window.CSBEventIsBln ) {
+			window.CSBEventIsBln = true ;
+			window.addEventListener( 'click' , ( e ) => {
+				console.log('ininin') ;
+				comn.selectBoxAll.forEach( slct => {
+					if ( !slct.contains( e.target ) ) {
+						slct.classList.remove( comn.activeClass ) ;
+					}
+				}) ;
+			}) ;
+		}
+
 		if( dom instanceof NodeList ) {
 			[].forEach.call( dom, sltBox => {
 				return SelectBoxWrap( sltBox, opts ) ;
@@ -274,7 +222,14 @@ const CustomSelectBox = (() => {
 })() ;
 
 
+
 window.addEventListener('load', function(){
+
+	// document.body.addEventListener('click', function(){
+	// 	console.log( 'body click in' ) ;
+	// }) ;
+
+
 	let customSelect01 = CustomSelectBox( document.querySelector('.select_rel_site') , { dir : 'down' } ) ;
 	let customSelect02 = CustomSelectBox( document.querySelector('.select_board_search') , { dir : 'up', scroll : true , viewNum : 3 } ) ;
 	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.custom_select') ) ;
