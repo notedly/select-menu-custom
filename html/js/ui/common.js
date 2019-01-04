@@ -1,3 +1,7 @@
+
+import React , { Component } from 'react' ;
+import ReactDOM , { render } from 'react-dom' ;
+
 const Common = {} ;
 
 const CustomSelectBox = (() => {
@@ -5,7 +9,6 @@ const CustomSelectBox = (() => {
 	const comn = {
 		selectBoxAll : [] ,
 		activeClass : 'active' ,
-		num : 0
 	} ;
 
 	const SelectBoxWrap = ( dom, opts ) => {
@@ -16,10 +19,7 @@ const CustomSelectBox = (() => {
 
 			constructor( tg, opts ){
 
-				comn.num++ ;
-				console.log( 'select num :', comn.num ) ;
-
-				// 전달받은 옵션을 저장합니다.
+				// 옵션 저장
 				let options = opts || {} ;
 				this.opts = {
 					dir : options.dir || 'down' ,
@@ -27,40 +27,30 @@ const CustomSelectBox = (() => {
 					viewNum : options.viewNum || 5 ,
 				}
 
-				// 사용할 태그들을 저장합니다.
+				// 태그 저장
 				this.tags = {
 					orgSlt : tg ,
-					newWrap : document.createElement('div') , // 커스텀 셀렉트 최상위 태그
-					newElem : null , // 커스텀 셀렉트 버튼, 옵션 태그
-					newBox : null , // 커스텀 셀렉트 옵션 부모 태그
-					newBtn : null , // 커스텀 셀렉트 버튼 태그
-					newOptBtn : null , // 커스텀 셀렉트 옵션 태그
-					sltOpt : null ,
+					newWrap : document.createElement('div') , // 최상위 태그
+					newElem : null , // 셀렉트 버튼, 옵션 태그
+					newBox : null , // 셀렉트 옵션 부모 태그
+					newBtn : null , // 셀렉트 버튼 태그
+					newOptBtn : null , // 셀렉트 옵션 태그
+					sltOpt : null ,	// 오리지널 옵션
 				}
 				this.tags.sltOpt = this.tags.orgSlt.querySelectorAll( 'option' ) ;
 
-				// 사용할 값들을 저장합니다.
+				// 값 저장
 				this.value = {
-					sltOptArr : [], // 셀렉트 리스트의 옵션정보 배열
+					items : [] , // 옵션 리스트 배열
 					crtSltIdx : 0 , // 현재 선택된 옵션 인덱스
 					prvSltIdx : 0, // 선택하기 전 옵션의 인덱스
-					chkOpen : false ,	// 셀렉트 박스 오픈 유무
-					isBodyEvt : false ,
 				}
 
-				this.value.sltOptArr = Array.from({ length : this.tags.sltOpt.length }).map( ( item, i ) => {
+				this.value.items = Array.from({ length : this.tags.sltOpt.length }).map( (item, i) => {
 					if( this.tags.sltOpt[i].selected ) {
 						this.value.crtSltIdx = i
 						this.value.prvSltIdx = i
 					}
-					return {
-						title : this.tags.sltOpt[i].firstChild.textContent ,
-						value : this.tags.sltOpt[i].value ,
-						selected : this.tags.sltOpt[i].selected ,
-					}
-				}) ;
-				this.value.itemArr = Array.from({ length : this.tags.sltOpt.length }).map( (item, i) => {
-					if( this.tags.sltOpt[i].selected ) { this.value.prvSltIdx = i }
 					return {
 						title : this.tags.sltOpt[i].firstChild.textContent ,
 						value : this.tags.sltOpt[i].value ,
@@ -80,9 +70,9 @@ const CustomSelectBox = (() => {
 				optsClickHandler : this.optsClickHandler ,
 			}*/
 
-			// 이벤트 모음
+			// 이벤트 핸들러
 			setEvt = () => {
-				let _this = this ,f ;
+				let _this = this;
 
 				// 셀렉트 타이틀 버튼 클릭 제어
 				SelectBox.data.tags.newBtn.addEventListener('click', () => this.showHideToggle() ) ;
@@ -105,29 +95,29 @@ const CustomSelectBox = (() => {
 
 			}
 
-			optsClickHandler = ( crntIdx ) =>
-{				SelectBox.data.tags.orgSlt.selectedIndex = crntIdx ;
-				SelectBox.data.value.itemArr[SelectBox.data.value.prvSltIdx].selected = false ;
+			// 옵션 클릭 핸들러
+			optsClickHandler = ( crntIdx ) => {
+				SelectBox.data.tags.orgSlt.selectedIndex = crntIdx ;
+				SelectBox.data.value.items[SelectBox.data.value.prvSltIdx].selected = false ;
 				SelectBox.data.tags.newOptBtn[SelectBox.data.value.prvSltIdx].classList.remove( comn.activeClass ) ;
 				SelectBox.data.tags.newOptBtn[crntIdx].classList.add( comn.activeClass ) ;
-				SelectBox.data.value.itemArr[crntIdx].selected = true ;
-				SelectBox.data.tags.newBtn.textContent = SelectBox.data.value.itemArr[crntIdx].title ;
+				SelectBox.data.value.items[crntIdx].selected = true ;
+				SelectBox.data.tags.newBtn.textContent = SelectBox.data.value.items[crntIdx].title ;
 				SelectBox.data.value.prvSltIdx = crntIdx ;
 			}
 
+			// 옵션 show,hide 토글
 			showHideToggle = () => {
 				if( SelectBox.data.tags.newWrap.classList.contains( comn.activeClass ) ){	// close
 					SelectBox.data.tags.newWrap.classList.remove( comn.activeClass ) ;
-					SelectBox.data.value.chkOpen = false ;
-					SelectBox.data.value.isBodyEvt = false ;
 				} else {	// open
 					SelectBox.data.tags.newWrap.classList.add( comn.activeClass ) ;
-					SelectBox.data.value.chkOpen = true ;
-					SelectBox.data.value.isBodyEvt = true ;
 				}
 			}
 
+			// 기능 옵션 적용
 			setOptionApply = () => {
+
 				// 열리는 방향 옵션
 				if( SelectBox.data.opts.dir == 'up' ) {
 					SelectBox.data.tags.newWrap.classList.add('dirUp') ;
@@ -141,19 +131,20 @@ const CustomSelectBox = (() => {
 				}
 			}
 
+			// 옵션 리스트 생성
 			setOptionList = () => {
 				let optionList = '' ;
-				SelectBox.data.value.itemArr.forEach(( item, idx ) => {
+				SelectBox.data.value.items.forEach(( item, idx ) => {
 					optionList += `<li data-value="${item.value}" class="${item.selected ? 'item active' : 'item'}">${item.title}</li>` ;
 				}) ;
 				return optionList ;
 			}
 
+			// 커스텀 셀렉트 박스 생성
 			setCustomMarkUp = () => {
 				let crntSelected = null ;
-				// 커스텀 마크업 생성
 				SelectBox.data.tags.newWrap.classList.add( 'custom_select_wrapper' ) ;
-				crntSelected = SelectBox.data.value.itemArr.filter( item => item.selected ) ;
+				crntSelected = SelectBox.data.value.items.filter( item => item.selected ) ;
 				SelectBox.data.tags.newElem =
 					`<button class="btn_select">
 						${ crntSelected[0].title }
@@ -183,25 +174,14 @@ const CustomSelectBox = (() => {
 
 		} // end of SelectBox
 
-		/*SelectBox.prototype = {
-			viewSelectBoxAll(){
-				console.log( '전체 커스텀 셀렉트 박스 : ', comn.selectBoxAll ) ;
-			}
-		}*/
-
 		return new SelectBox( dom, opts ) ;
 	};
 
-	/*document.body.addEventListener('click', function(){
-		console.log( comn.selectBoxAll ) ;
-	}) ;*/
-
 	return ( dom, opts ) => {
-
-		if ( !window.CSBEventIsBln ) {
+		if ( !window.CSBEventIsBln ) {	// 처음에 한 번만 실행시키기 위해 조건을 적용하여 실행합니다.
 			window.CSBEventIsBln = true ;
+			// 셀렉트 박스 영역 외 클릭 시 열려 있는 셀렉트박스 숨김처리
 			window.addEventListener( 'click' , ( e ) => {
-				console.log('ininin') ;
 				comn.selectBoxAll.forEach( slct => {
 					if ( !slct.contains( e.target ) ) {
 						slct.classList.remove( comn.activeClass ) ;
@@ -221,32 +201,85 @@ const CustomSelectBox = (() => {
 
 })() ;
 
+class SelectBox extends Component {
+	constructor( props ) {
+		super( props ) ;
+
+		console.log( this.props ) ;
+
+		this.opts = this.props.opts || {} ;
+
+		this.state = {
+			crntChk : this.props.conts[0].title ,
+			conts : this.props.conts ,
+			opts : {
+				dir : this.opts.dir || 'down' ,
+				scroll : this.opts.scroll || false ,
+				viewNum : this.opts.viewNum || 5 ,
+			}
+		} ;
+
+		this.optionClickEvt = this.optionClickEvt.bind(this) ;
+
+	}
+
+	makeSltList ( item, idx ) {
+		console.log( item , 'ininin' ) ;
+		return (
+			<li key={idx} data-value={item.value} className="item" onClick={this.optionClickEvt }>{item.title}</li>
+		)
+	}
+
+	toggleEvt () {
+		this.sltWrap.classList.contains( 'active' ) ? this.sltWrap.classList.remove( 'active' ) : this.sltWrap.classList.add( 'active' ) ;
+	}
+
+	optionClickEvt ( event ) {
+
+		let tg = event.target
+		,	 lis = tg.closest('ul').querySelectorAll('li')
+		,	 crntIdx = [].indexOf.call( lis ,tg ) ;
+
+		this.setState({
+			crntChk : this.state.conts[ crntIdx ].title
+		}) ;
+
+		this.toggleEvt() ;
+
+	}
+
+	render(){
+
+		/*let sltStyle = {
+			visibility: 'visible' ,
+			opacity: 1 ,
+			transform: 'translateY(0)' ,
+		}*/
+
+		return(
+			<div className="wrap_select_box">
+				<div className={ this.state.opts.dir == 'up' ? 'dirUp custom_select_wrapper' : 'custom_select_wrapper' } ref={ sltWrap => this.sltWrap = sltWrap } >
+					<button className="btn_select" onClick={this.toggleEvt.bind(this)}>{this.state.crntChk}</button>
+					<ul className="bx_option">
+				   	{ this.state.conts.map( ( item, idx, arr ) => this.makeSltList( item, idx ) ) }
+					</ul>
+				</div>
+			</div>
+		)
+	}
+}
 
 
 window.addEventListener('load', function(){
 
-	// document.body.addEventListener('click', function(){
-	// 	console.log( 'body click in' ) ;
-	// }) ;
-
-
 	let customSelect01 = CustomSelectBox( document.querySelector('.select_rel_site') , { dir : 'down' } ) ;
 	let customSelect02 = CustomSelectBox( document.querySelector('.select_board_search') , { dir : 'up', scroll : true , viewNum : 3 } ) ;
 	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.custom_select') ) ;
-
-
-
 	// let customSelect03 = CustomSelectBox( document.querySelectorAll('.select_board_search2') ) ;
 
-	// let a = CustomSelectBox() ;
-	// console.log( a ) ;
-
-	// customSelect02.viewSelectBoxAll() ;
-	// customSelect01.getAllSelect() ;
-	// customSelect02.getAllSelect() ;
 
 
 }) ;
 
 
-export { CustomSelectBox } ;
+export { CustomSelectBox , SelectBox} ;
