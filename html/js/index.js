@@ -4,11 +4,11 @@ import { SelectBox } from './ui/common' ;
 
 let sltMenus = {
 	data : [
-		{ value : 'title' , title : '제목' } ,
-		{ value : 'number' , title : '번호' } ,
-		{ value : 'writer' , title : '작성자' } ,
-		{ value : 'date' , title : '날짜' } ,
-		{ value : 'text' , title : '내용' } ,
+		{ value : 'title' , title : 'Lorem ipsum' } ,
+		{ value : 'number' , title : 'dolor sit amet' } ,
+		{ value : 'writer' , title : 'consectetur' } ,
+		{ value : 'date' , title : 'adipisicing' } ,
+		{ value : 'text' , title : 'elit' } ,
 	]
 }
 
@@ -21,7 +21,7 @@ window.addEventListener('load', function(){
 	render( <SelectBox
 		initSltNum='1'
 		opts={ {dir : 'down' , scroll : false ,	viewNum : 3} }
-		options={ data }
+		menus={ data }
 		/> ,
 		document.querySelector('.wrap')
 	) ;

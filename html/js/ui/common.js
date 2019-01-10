@@ -11,7 +11,7 @@ class SelectBox extends Component {
 
 		this.state = {
 			crntIdx : this.props.initSltNum || 0 ,
-			options : this.props.options ,
+			menus : this.props.menus ,
 			opts : {
 				dir : this.opts.dir || 'down' ,
 				scroll : this.opts.scroll || false ,
@@ -30,7 +30,7 @@ class SelectBox extends Component {
 	aaa = () => {}
 
 	componentDidUpdate(){
-		console.log( '리렌더링 완료____현재 선택된 메뉴 :', this.props.options[this.state.crntIdx].title ) ;
+		console.log( '리렌더링 완료____현재 선택된 메뉴 :', this.props.menus[this.state.crntIdx].title ) ;
 	}
 
 	componentDidMount() {
@@ -39,8 +39,20 @@ class SelectBox extends Component {
 		});
 	}
 
+	// 타이틀 마크업
+	renderValues = () => {
+
+		let { menus, crntIdx } = this.state ;
+
+		return(
+			<button className="customSelect-title" onClick={this.evtSltOpenToggle}>
+				{menus[crntIdx].title}
+			</button>
+		)
+	}
+
 	// 커스텀 셀렉트 박스 리스트 마크업
-	makeCustomSltList = ( item, idx ) => {
+	rendermenus = ( item, idx ) => {
 
 		let classNames = idx == this.state.crntIdx ? 'item active' : 'item' ;
 
@@ -66,25 +78,22 @@ class SelectBox extends Component {
 
 		console.log( '>>>>>>>>>>>>>>>>>>>>> render' ) ;
 
-		let optionStyle = {}
+		let menuWrapStyle = {}
 		,	 wrapClassNames = null
-		,	 { options , opts , crntIdx } = this.state ;
-
+		,	 { menus , opts , crntIdx } = this.state ;
 
 		if( opts.scroll ) {
-			optionStyle.overflowY = 'scroll' ;
-			optionStyle.height = this.state.itemH * this.state.opts.viewNum ;
+			menuWrapStyle.overflowY = 'scroll' ;
+			menuWrapStyle.height = this.state.itemH * this.state.opts.viewNum ;
 		}
 
 		wrapClassNames = opts.dir == 'up' ? 'dirUp customSelect' : 'customSelect' ;
 
 		return(
 			<div className={ wrapClassNames } ref={ ref => this.sltWrap = ref } >
-				<button className="customSelect-title" onClick={this.evtSltOpenToggle}>
-					{options[crntIdx].title}
-				</button>
-				<ul className="customSelect-option" ref={ ref => this.optionWrap = ref } style={optionStyle}>
-			   	{ options.map( ( item, idx, arr ) => this.makeCustomSltList( item, idx ) ) }
+				{ this.renderValues() }
+				<ul className="customSelect-option" ref={ ref => this.optionWrap = ref } style={menuWrapStyle}>
+			   	{ menus.map( ( item, idx, arr ) => this.rendermenus( item, idx ) ) }
 				</ul>
 			</div>
 		)
